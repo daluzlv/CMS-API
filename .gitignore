@@ -1,0 +1,71 @@
+# Configuração geral
+.DS_Store
+Thumbs.db
+
+# Arquivos de log
+*.log
+*.tlog
+*.vspscc
+
+# Diretórios de build
+bin/
+obj/
+out/
+
+# Arquivos de dependência
+project.lock.json
+project.fragment.lock.json
+*.nuget.props
+*.nuget.targets
+*.csproj.nuget.g.props
+*.csproj.nuget.g.targets
+
+# Configurações locais do Visual Studio
+.vscode/
+.vs/
+*.user
+*.suo
+
+# Configuração do Rider/JetBrains
+.idea/
+*.sln.iml
+
+# Arquivos gerados pelo sistema
+*.cache
+*.pdb
+*.mdb
+*.pidb
+
+# Chaves, credenciais e configuração local
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.json
+secrets.json
+
+# Pacotes
+*.nupkg
+*.snupkg
+
+# Diretórios temporários
+*.swp
+*.lock.json
+node_modules/
+wwwroot/lib/
+wwwroot/dist/
+wwwroot/css/
+wwwroot/js/
+
+# Cobertura de testes
+coverage/
+*.coverage
+*.coveragexml
+TestResults/
+
+# Arquivos de dump e depuração
+*.dump
+*.bak
+*.swp
+
+# Containers e gerenciadores de dependência
+.env
+docker-compose.override.yml
