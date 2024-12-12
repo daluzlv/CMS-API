@@ -18,6 +18,9 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.UseSecurity();
+
 app.UseHttpsRedirection();
 
+app.MapControllers();
 app.Run();
