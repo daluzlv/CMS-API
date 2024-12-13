@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.OpenApi.Models;
-
-namespace Api.Configuration;
+﻿namespace Api.Configuration;
 
 public static class ServicesConfiguration
 {
@@ -15,8 +12,9 @@ public static class ServicesConfiguration
         services.AddEndpointsApiExplorer();
         services.AddSwagger();
 
-        services.AddAuthentication().AddBearerToken(IdentityConstants.BearerScheme);
         services.AddAuthorization();
+
+        services.AddDependencyInjection();
 
         return services;
     }
