@@ -3,6 +3,7 @@ using Api.Configuration;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddServicesConfiguration(builder.Configuration);
+builder.Services.AddIdentityConfiguration();
 
 var app = builder.Build();
 
@@ -17,8 +18,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseSecurity();
-
-app.UseHttpsRedirection();
+app.UseIdentityConfiguration();
 
 app.MapControllers();
 app.Run();
