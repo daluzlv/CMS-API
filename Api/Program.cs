@@ -1,14 +1,8 @@
 using Api.Configuration;
-using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// services
-builder.Services.AddDatabaseConfiguration(builder.Configuration);
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
-
+builder.Services.AddServicesConfiguration(builder.Configuration);
 
 var app = builder.Build();
 
