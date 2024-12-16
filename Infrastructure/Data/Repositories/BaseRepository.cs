@@ -18,6 +18,7 @@ public class BaseRepository<T>(AppDbContext dbContext) : IRepository<T> where T 
     }
 
     public async Task<T?> GetByIdAsync(Guid id) => await _dbContext.Set<T>().FindAsync(id);
+    public async Task<T?> GetByIdAsync(string id) => await _dbContext.Set<T>().FindAsync(id);
 
     public void Add(T entity) => _dbContext.Add(entity);
 
