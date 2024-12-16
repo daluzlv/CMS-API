@@ -1,6 +1,17 @@
 ﻿using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Api.Configuration;
+
+public class RemoveIdentityEndpointsFilter : IDocumentFilter
+{
+    public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
+    {
+        // Remove as rotas do Swagger
+        foreach (var path in IdentityConfiguration.UnmappedIdentityEndpoints)
+            swaggerDoc.Paths.Remove(path);
+    }
+}
 
 public static class SwaggerConfiguration
 {
@@ -38,6 +49,8 @@ public static class SwaggerConfiguration
                     new List<string>()
                 }
             });
+
+            options.DocumentFilter<RemoveIdentityEndpointsFilter>();
         });
 
         services.AddSwaggerGen();
