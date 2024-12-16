@@ -12,24 +12,27 @@ public class JwtTokenService(IConfiguration configuration) : ITokenService
 {
     public string Token(User user)
     {
-        var handler = new JwtSecurityTokenHandler();
-
-        var ci = new ClaimsIdentity();
-        ci.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
-        ci.AddClaim(new Claim(ClaimTypes.Name, user.Email!));
-        ci.AddClaim(new Claim(ClaimTypes.Role, "Adm"));
-
-        var secret = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration["JwtSettings:Secret"]!));
-        var credentials = new SigningCredentials(secret, SecurityAlgorithms.HmacSha256Signature);
-
-        var tokenDescriptor = new SecurityTokenDescriptor
+        var claims = new[]
         {
-            Subject = ci,
-            Expires = DateTime.UtcNow.AddHours(double.Parse(configuration["JwtSettings:ExpirationHours"]!)),
-            SigningCredentials = credentials
+            new Claim("sub", user.Id),
+            new Claim("email", user.Email),
         };
 
-        var token = handler.CreateToken(tokenDescriptor);
+        var secret = configuration["JwtSettings:Secret"];
+        var issuer = configuration["JwtSettings:Issuer"];
+        var expirationHours = int.Parse(configuration["JwtSettings:ExpirationHours"]!);
+
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret!));
+        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var token = new JwtSecurityToken(
+            issuer: issuer,
+            audience: issuer,
+            claims: claims,
+            expires: DateTime.Now.AddHours(expirationHours),
+            signingCredentials: credentials
+        );
+
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }

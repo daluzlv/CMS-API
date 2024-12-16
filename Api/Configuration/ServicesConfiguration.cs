@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace Api.Configuration;
 
@@ -12,7 +13,12 @@ public static class ServicesConfiguration
         services.AddControllers(options =>
         {
             options.Conventions.Add(new RoutePrefixConvention("api"));
+        }).AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+            options.JsonSerializerOptions.WriteIndented = true; // Formata o JSON
         });
+
         services.AddEndpointsApiExplorer();
         services.AddSwagger();
 
