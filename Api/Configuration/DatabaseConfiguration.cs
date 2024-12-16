@@ -9,6 +9,7 @@ public static class DatabaseConfiguration
     {
         var connStr = configuration.GetConnectionString("DefaultDatabase");
         services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connStr));
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
         return services;
     }
