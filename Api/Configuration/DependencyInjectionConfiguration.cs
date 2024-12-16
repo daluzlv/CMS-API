@@ -1,4 +1,6 @@
-﻿using Application.Services.Authentication;
+﻿using Application.Interfaces.Services;
+using Application.Services;
+using Application.Services.Authentication;
 using Domain.Interfaces.Repositories.Base;
 using Infrastructure.Data.Repositories;
 using Infrastructure.Interfaces.Services.Authentication;
@@ -12,6 +14,7 @@ public static class DependencyInjectionConfiguration
         services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
 
         services.AddScoped<ITokenService, JwtTokenService>();
+        services.AddScoped<IPostService, PostService>();
 
         return services;
     }
