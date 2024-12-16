@@ -7,9 +7,8 @@ public class Comment
     public DateTime CreatedAt { get; set; }
     public Guid UserId { get; set; }
 
-    public Comment(Guid id, string content, Guid userId)
+    public Comment(string content, Guid userId)
     {
-        Id = id;
         Content = content;
         CreatedAt = DateTime.Now;
         UserId = userId;

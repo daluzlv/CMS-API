@@ -11,9 +11,8 @@ public class Post
     private readonly List<Comment> _comments;
     public IEnumerable<Comment> Comments => _comments;
 
-    public Post(Guid id, string title, string content, Guid userId)
+    public Post(string title, string content, Guid userId)
     {
-        Id = id;
         CreatedAt = DateTime.Now;
         Title = title;
         Content = content;
@@ -21,15 +20,8 @@ public class Post
         _comments = [];
     }
 
-    public Post(Guid id, string title, string content, Guid userId, IList<Comment> comments)
+    public Post(string title, string content, Guid userId, IList<Comment> comments) : this(title, content, userId)
     {
-        Id = id;
-        CreatedAt = DateTime.Now;
-        Title = title;
-        Content = content;
-        UserId = userId;
-
-        _comments = [];
         _comments.AddRange(comments);
     }
 }
