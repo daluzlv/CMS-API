@@ -10,16 +10,10 @@ namespace Api.Controllers;
 
 [ApiController]
 [Route("authentication")]
-public class AuthenticationController : ControllerBase
+public class AuthenticationController(UserManager<User> userManager, ITokenService tokenService) : ControllerBase
 {
-    private readonly UserManager<User> _userManager;
-    private readonly ITokenService _tokenService;
-
-    public AuthenticationController(UserManager<User> userManager, ITokenService tokenService)
-    {
-        _userManager = userManager;
-        _tokenService = tokenService;
-    }
+    private readonly UserManager<User> _userManager = userManager;
+    private readonly ITokenService _tokenService = tokenService;
 
     [HttpGet]
     [Authorize]
