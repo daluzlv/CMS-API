@@ -24,4 +24,10 @@ public class Post
     {
         _comments.AddRange(comments);
     }
+
+    public void Update(string title, string content)
+    {
+        Title = title;
+        Content = content;
+    }
 }

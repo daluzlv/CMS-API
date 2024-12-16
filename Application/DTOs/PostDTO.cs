@@ -10,13 +10,13 @@ public class ApiAddPostDTO(string title, string content)
     public string Content { get; set; } = content;
 }
 
-public class GetPostDTO(Guid id, string title, string content, DateTime createdAt, UserDTO user)
+public class GetPostDTO(Guid id, string title, string content, string username, DateTime createdAt)
 {
     public Guid Id { get; set; } = id;
     public string Title { get; set; } = title;
     public string Content { get; set; } = content;
+    public string Username { get; set; } = username;
     public DateTime CreatedAt { get; set; } = createdAt;
-    public UserDTO User { get; set; } = user;
 }
 
 public class AddPostDTO(string title, string content, Guid userId)
@@ -31,21 +31,21 @@ public class AddPostDTO(string title, string content, Guid userId)
 
         validator.RuleFor(p => p.Title)
             .NotEmpty()
-            .WithMessage("Título não pode ser vazio")
+            .WithMessage("Title cannot be empty.")
             .NotNull()
-            .WithMessage("Título não pode ser vazio");
+            .WithMessage("Title cannot be empty.");
 
         validator.RuleFor(p => p.Content)
             .NotEmpty()
-            .WithMessage("Título não pode ser vazio")
+            .WithMessage("Content cannot be empty.")
             .NotNull()
-            .WithMessage("Título não pode ser vazio");
+            .WithMessage("Content cannot be empty.");
 
         validator.RuleFor(p => p.UserId)
             .NotEmpty()
-            .WithMessage("Título não pode ser vazio")
+            .WithMessage("UserId cannot be empty.")
             .NotNull()
-            .WithMessage("Título não pode ser vazio");
+            .WithMessage("UserId cannot be empty.");
 
         return validator.Validate(this);
     }

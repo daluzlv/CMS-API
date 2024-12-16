@@ -13,8 +13,36 @@ public class PostController(IPostService service, UserManager<User> userManager)
 {
     private readonly IPostService _service = service;
 
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<GetPostDTO>>> Get(string? search)
+    {
+        try
+        {
+            var posts = await _service.GetAsync(search);
+            return Ok(posts);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<GetPostDTO>> GetById(Guid id)
+    {
+        try
+        {
+            var post = await _service.GetByIdAsync(id);
+            return Ok(post);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
     [HttpPost, Authorize]
-    public async Task<IActionResult> Post([FromBody] ApiAddPostDTO apiAddPostDTO)
+    public async Task<ActionResult<GetPostDTO>> Post([FromBody] ApiAddPostDTO apiAddPostDTO, CancellationToken cancellationToken)
     {
         try
         {
@@ -22,13 +50,57 @@ public class PostController(IPostService service, UserManager<User> userManager)
             if (userId == null) return Unauthorized();
 
             var addPostDTO = new AddPostDTO(apiAddPostDTO.Title, apiAddPostDTO.Content, userId.Value);
-            var post = await _service.Add(addPostDTO);
+            var post = await _service.Add(addPostDTO, cancellationToken);
 
             return Ok(post);
         }
         catch (ArgumentException ex)
         {
             return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
+    [HttpPut("{id}"), Authorize]
+    public async Task<ActionResult<GetPostDTO>> Put(Guid id, [FromBody] ApiAddPostDTO apiAddPostDTO, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var userId = await GetUserIdAsync();
+            if (userId == null) return Unauthorized();
+
+            var addPostDTO = new AddPostDTO(apiAddPostDTO.Title, apiAddPostDTO.Content, userId.Value);
+            var post = await _service.Update(id, addPostDTO, cancellationToken);
+
+            return Ok(post);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
+    [HttpDelete, Authorize]
+    public async Task<ActionResult> Delete(Guid id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var userId = await GetUserIdAsync();
+            if (userId == null) return Unauthorized();
+
+            await _service.Delete(id, userId.Value, cancellationToken);
+            return NoContent();
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized();
         }
         catch (Exception ex)
         {
