@@ -4,8 +4,8 @@ public class Post
 {
     public Guid Id { get; set; }
     public DateTime CreatedAt { get; set; }
-    public string Title { get; set; }
-    public string Content { get; set; }
+    public string Title { get; private set; }
+    public string Content { get; private set; }
     public Guid UserId { get; set; }
 
     private readonly List<Comment> _comments;
@@ -30,4 +30,6 @@ public class Post
         Title = title;
         Content = content;
     }
+
+    public void AddComment(Comment comment) => _comments.Add(comment);
 }

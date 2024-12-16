@@ -7,9 +7,10 @@ using System.Linq.Expressions;
 
 namespace Application.Services;
 
-public class PostService(IRepository<Post> repository, IRepository<User> userRepository) : IPostService
+public class PostService(IRepository<Post> repository, IRepository<Comment> commentRepository, IRepository<User> userRepository) : IPostService
 {
     private readonly IRepository<Post> _repository = repository;
+    private readonly IRepository<Comment> _commentRepository = commentRepository;
     private readonly IRepository<User> _userRepository = userRepository;
 
     public async Task<List<GetPostDTO>> GetAsync(string? search)
@@ -43,16 +44,16 @@ public class PostService(IRepository<Post> repository, IRepository<User> userRep
 
     public async Task<GetPostDTO> Add(AddPostDTO dto, CancellationToken cancellationToken)
     {
-        var isValid = dto.Validate().IsValid;
-        if (!isValid) throw new ArgumentException("Post is invalid.");
+        var validator = dto.Validate();
+        if (!validator.IsValid) throw new ArgumentException(string.Join(",", validator.Errors.Select(e => e.ErrorMessage)));
 
         var duplicatedPosts = await _repository.GetAsync(p => p.UserId == dto.UserId && p.Title == dto.Title && p.Title == dto.Content);
-        if (duplicatedPosts.Count > 0) throw new ArgumentException("Post was already created.");
+        if (duplicatedPosts.Count > 0) throw new ArgumentException("Post was already created");
 
         var post = new Post(dto.Title, dto.Content, dto.UserId);
         _repository.Add(post);
 
-        if (!await _repository.CommitAsync(cancellationToken)) throw new ApplicationException("Was not possible to save the post.");
+        if (!await _repository.CommitAsync(cancellationToken)) throw new ApplicationException("Was not possible to save the post");
 
         var user = await _userRepository.GetByIdAsync(post.UserId.ToString());
         return MapToGetPostDTO(post, user!);
@@ -60,19 +61,19 @@ public class PostService(IRepository<Post> repository, IRepository<User> userRep
 
     public async Task<GetPostDTO> Update(Guid id, AddPostDTO dto, CancellationToken cancellationToken)
     {
-        var isValid = dto.Validate().IsValid;
-        if (!isValid) throw new ArgumentException("Post is invalid.");
+        var validator = dto.Validate();
+        if (!validator.IsValid) throw new ArgumentException(string.Join(",", validator.Errors.Select(e => e.ErrorMessage)));
 
-        var post = await _repository.GetByIdAsync(id) ?? throw new ArgumentException("Post does no exists.");
+        var post = await _repository.GetByIdAsync(id) ?? throw new ArgumentException("Post not found");
         if (post!.UserId != dto.UserId) throw new UnauthorizedAccessException();
 
         var duplicatedPosts = await _repository.GetAsync(p => p.UserId == dto.UserId && p.Title == dto.Title && p.Title == dto.Content);
-        if (duplicatedPosts.Count > 0) throw new ArgumentException("Post was already exists.");
+        if (duplicatedPosts.Count > 0) throw new ArgumentException("Post was already exists");
 
         post.Update(dto.Title, dto.Content);
         _repository.Update(post);
 
-        if (!await _repository.CommitAsync(cancellationToken)) throw new ApplicationException("Was not possible to save the post.");
+        if (!await _repository.CommitAsync(cancellationToken)) throw new ApplicationException("Was not possible to save the post");
 
         var user = await _userRepository.GetByIdAsync(post.UserId.ToString());
         return MapToGetPostDTO(post, user!);
@@ -80,13 +81,33 @@ public class PostService(IRepository<Post> repository, IRepository<User> userRep
 
     public async Task Delete(Guid id, Guid userId, CancellationToken cancellationToken)
     {
-        var post = await _repository.GetByIdAsync(id) ?? throw new ArgumentException("Post not found.");
+        var post = await _repository.GetByIdAsync(id) ?? throw new ArgumentException("Post not found");
         if (post.UserId != userId) throw new UnauthorizedAccessException();
 
         _repository.Delete(post);
-        if (!await _repository.CommitAsync(cancellationToken)) throw new ApplicationException("Was not possible to save the post.");
+        if (!await _repository.CommitAsync(cancellationToken)) throw new ApplicationException("Was not possible to save the post");
+    }
+
+    public async Task<GetCommentDTO> Comment(Guid id, AddCommentDTO dto, CancellationToken cancellationToken)
+    {
+        var validator = dto.Validate();
+        if (!validator.IsValid)
+            throw new ArgumentException(string.Join(",", validator.Errors.Select(e => e.ErrorMessage)));
+
+        var post = await _repository.GetByIdAsync(id) ?? throw new ArgumentException("Post not found");
+
+        var comment = new Comment(dto.Content, dto.UserId);
+        post.AddComment(comment);
+        _repository.Update(post);
+
+        if (!await _repository.CommitAsync(cancellationToken)) throw new ApplicationException("Was not possible to save the comment");
+
+        var user = await _userRepository.GetByIdAsync(post.UserId.ToString());
+        return MapToGetCommentDTO(comment, user!);
     }
 
     private static GetPostDTO MapToGetPostDTO(Post post, User user) =>
         new(post.Id, post.Title, post.Content, user.UserName!, post.CreatedAt);
+
+    private static GetCommentDTO MapToGetCommentDTO(Comment comment, User user) => new(comment.Id, comment.Content, comment.CreatedAt, user.UserName!);
 }

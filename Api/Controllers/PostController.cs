@@ -88,7 +88,7 @@ public class PostController(IPostService service, UserManager<User> userManager)
     }
 
     [HttpDelete, Authorize]
-    public async Task<ActionResult> Delete(Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
         try
         {
@@ -101,6 +101,29 @@ public class PostController(IPostService service, UserManager<User> userManager)
         catch (UnauthorizedAccessException ex)
         {
             return Unauthorized();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
+    [HttpPost("{id}/comment"), Authorize]
+    public async Task<ActionResult<GetCommentDTO>> Comment(Guid id, [FromBody] ApiAddCommentDTO dto, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var userId = await GetUserIdAsync();
+            if (userId == null) return Unauthorized();
+
+            var addCommentDTO = new AddCommentDTO(dto.Content, userId.Value);
+            var post = await _service.Comment(id, addCommentDTO, cancellationToken);
+
+            return Ok(post);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
         }
         catch (Exception ex)
         {
