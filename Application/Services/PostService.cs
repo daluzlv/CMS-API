@@ -1,5 +1,5 @@
 ﻿using Application.DTOs;
-using Application.Interfaces.Services;
+using Application.Interfaces;
 using Domain.Interfaces.Repositories.Base;
 using Domain.Models;
 using Infrastructure.Identity.Models;
@@ -27,8 +27,8 @@ public class PostService(IRepository<Post> repository, IRepository<Comment> comm
         var uniqueUserId = posts.Select(p => p.UserId.ToString()).Distinct().ToList();
         var users = await _userRepository.GetAsync(u => uniqueUserId.Contains(u.Id));
 
-        var getPostsDTO = posts.Select(p => MapToGetPostDTO(p, users.First(u => u.Id == p.UserId.ToString())));
-        return getPostsDTO.ToList();
+        var dto = posts.Select(p => MapToGetPostDTO(p, users.First(u => u.Id == p.UserId.ToString())));
+        return dto.ToList();
     }
 
     public async Task<GetPostDTO> GetByIdAsync(Guid id)
@@ -38,8 +38,8 @@ public class PostService(IRepository<Post> repository, IRepository<Comment> comm
 
         var user = await _userRepository.GetByIdAsync(post.UserId.ToString());
 
-        var postDTO = MapToGetPostDTO(post, user!);
-        return postDTO;
+        var dto = MapToGetPostDTO(post, user!);
+        return dto;
     }
 
     public async Task<GetPostDTO> Add(AddPostDTO dto, CancellationToken cancellationToken)
@@ -67,7 +67,7 @@ public class PostService(IRepository<Post> repository, IRepository<Comment> comm
         var post = await _repository.GetByIdAsync(id) ?? throw new ArgumentException("Post not found");
         if (post!.UserId != dto.UserId) throw new UnauthorizedAccessException();
 
-        var duplicatedPosts = await _repository.GetAsync(p => p.UserId == dto.UserId && p.Title == dto.Title && p.Title == dto.Content);
+        var duplicatedPosts = await _repository.GetAsync(p => p.UserId == dto.UserId && p.Title == dto.Title && p.Content == dto.Content);
         if (duplicatedPosts.Count > 0) throw new ArgumentException("Post was already exists");
 
         post.Update(dto.Title, dto.Content);
@@ -85,7 +85,7 @@ public class PostService(IRepository<Post> repository, IRepository<Comment> comm
         if (post.UserId != userId) throw new UnauthorizedAccessException();
 
         _repository.Delete(post);
-        if (!await _repository.CommitAsync(cancellationToken)) throw new ApplicationException("Was not possible to save the post");
+        if (!await _repository.CommitAsync(cancellationToken)) throw new ApplicationException("Was not possible to delete the post");
     }
 
     public async Task<GetCommentDTO> Comment(Guid id, AddCommentDTO dto, CancellationToken cancellationToken)
@@ -109,5 +109,6 @@ public class PostService(IRepository<Post> repository, IRepository<Comment> comm
     private static GetPostDTO MapToGetPostDTO(Post post, User user) =>
         new(post.Id, post.Title, post.Content, user.UserName!, post.CreatedAt);
 
-    private static GetCommentDTO MapToGetCommentDTO(Comment comment, User user) => new(comment.Id, comment.Content, comment.CreatedAt, user.UserName!);
+    private static GetCommentDTO MapToGetCommentDTO(Comment comment, User user) =>
+        new(comment.Id, comment.Content, comment.CreatedAt, user.UserName!);
 }

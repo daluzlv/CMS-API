@@ -1,6 +1,6 @@
 ﻿using Api.Controllers.Base;
 using Application.DTOs;
-using Application.Interfaces.Services;
+using Application.Interfaces;
 using Infrastructure.Identity.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -42,14 +42,14 @@ public class PostController(IPostService service, UserManager<User> userManager)
     }
 
     [HttpPost, Authorize]
-    public async Task<ActionResult<GetPostDTO>> Post([FromBody] ApiAddPostDTO apiAddPostDTO, CancellationToken cancellationToken)
+    public async Task<ActionResult<GetPostDTO>> Post([FromBody] ApiAddPostDTO dto, CancellationToken cancellationToken)
     {
         try
         {
             var userId = await GetUserIdAsync();
             if (userId == null) return Unauthorized();
 
-            var addPostDTO = new AddPostDTO(apiAddPostDTO.Title, apiAddPostDTO.Content, userId.Value);
+            var addPostDTO = new AddPostDTO(dto.Title, dto.Content, userId.Value);
             var post = await _service.Add(addPostDTO, cancellationToken);
 
             return Ok(post);
@@ -65,14 +65,14 @@ public class PostController(IPostService service, UserManager<User> userManager)
     }
 
     [HttpPut("{id}"), Authorize]
-    public async Task<ActionResult<GetPostDTO>> Put(Guid id, [FromBody] ApiAddPostDTO apiAddPostDTO, CancellationToken cancellationToken)
+    public async Task<ActionResult<GetPostDTO>> Put(Guid id, [FromBody] ApiAddPostDTO dto, CancellationToken cancellationToken)
     {
         try
         {
             var userId = await GetUserIdAsync();
             if (userId == null) return Unauthorized();
 
-            var addPostDTO = new AddPostDTO(apiAddPostDTO.Title, apiAddPostDTO.Content, userId.Value);
+            var addPostDTO = new AddPostDTO(dto.Title, dto.Content, userId.Value);
             var post = await _service.Update(id, addPostDTO, cancellationToken);
 
             return Ok(post);
@@ -98,7 +98,7 @@ public class PostController(IPostService service, UserManager<User> userManager)
             await _service.Delete(id, userId.Value, cancellationToken);
             return NoContent();
         }
-        catch (UnauthorizedAccessException ex)
+        catch (UnauthorizedAccessException)
         {
             return Unauthorized();
         }

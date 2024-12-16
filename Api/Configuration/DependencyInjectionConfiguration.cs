@@ -1,4 +1,4 @@
-﻿using Application.Interfaces.Services;
+﻿using Application.Interfaces;
 using Application.Services;
 using Application.Services.Authentication;
 using Domain.Interfaces.Repositories.Base;
@@ -15,6 +15,7 @@ public static class DependencyInjectionConfiguration
 
         services.AddScoped<ITokenService, JwtTokenService>();
         services.AddScoped<IPostService, PostService>();
+        services.AddScoped<ICommentService, CommentService>();
 
         return services;
     }
