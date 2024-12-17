@@ -10,6 +10,18 @@ public static class ServicesConfiguration
     public static IServiceCollection AddServicesConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDatabaseConfiguration(configuration);
+
+        services.AddCors(options =>
+        {
+            options.AddPolicy("AllowLocalAngularApp",
+                policy =>
+                {
+                    policy.WithOrigins("http://localhost:4200")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+        });
+
         services.AddControllers(options =>
         {
             options.Conventions.Add(new RoutePrefixConvention("api"));
