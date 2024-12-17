@@ -14,6 +14,7 @@ public static class DependencyInjectionConfiguration
         services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
 
         services.AddScoped<ITokenService, JwtTokenService>();
+        services.AddScoped<IUserService, UserService>();
         services.AddScoped<IPostService, PostService>();
         services.AddScoped<ICommentService, CommentService>();
 
