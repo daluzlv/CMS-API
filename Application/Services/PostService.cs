@@ -7,10 +7,9 @@ using System.Linq.Expressions;
 
 namespace Application.Services;
 
-public class PostService(IRepository<Post> repository, IRepository<Comment> commentRepository, IRepository<User> userRepository) : IPostService
+public class PostService(IRepository<Post> repository, IRepository<User> userRepository) : IPostService
 {
     private readonly IRepository<Post> _repository = repository;
-    private readonly IRepository<Comment> _commentRepository = commentRepository;
     private readonly IRepository<User> _userRepository = userRepository;
 
     public async Task<List<GetPostDTO>> GetAsync(string? search)

@@ -77,6 +77,10 @@ public class PostController(IPostService service, UserManager<User> userManager)
 
             return Ok(post);
         }
+        catch (UnauthorizedAccessException)
+        {
+            return Unauthorized();
+        }
         catch (ArgumentException ex)
         {
             return BadRequest(ex.Message);

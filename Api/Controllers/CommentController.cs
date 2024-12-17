@@ -40,6 +40,10 @@ public class CommentController(ICommentService service, UserManager<User> userMa
 
             return Ok(comment);
         }
+        catch (UnauthorizedAccessException)
+        {
+            return Unauthorized();
+        }
         catch (ArgumentException ex)
         {
             return BadRequest(ex.Message);
