@@ -106,7 +106,7 @@ public class PostService(IRepository<Post> repository, IRepository<User> userRep
     }
 
     private static GetPostDTO MapToGetPostDTO(Post post, User user) =>
-        new(post.Id, post.Title, post.Content, user.UserName!, post.CreatedAt);
+        new(post.Id, post.Title, post.Content, user.FullName!, post.CreatedAt);
 
     private static GetCommentDTO MapToGetCommentDTO(Comment comment, User user) =>
         new(comment.Id, comment.Content, comment.CreatedAt, user.UserName!);

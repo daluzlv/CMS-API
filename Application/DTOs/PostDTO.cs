@@ -10,12 +10,12 @@ public class ApiAddPostDTO(string title, string content)
     public string Content { get; set; } = content;
 }
 
-public class GetPostDTO(Guid id, string title, string content, string username, DateTime createdAt)
+public class GetPostDTO(Guid id, string title, string content, string fullName, DateTime createdAt)
 {
     public Guid Id { get; set; } = id;
     public string Title { get; set; } = title;
     public string Content { get; set; } = content;
-    public string Username { get; set; } = username;
+    public string FullName { get; set; } = fullName;
     public DateTime CreatedAt { get; set; } = createdAt;
 }
 
