@@ -52,5 +52,5 @@ public class CommentService(IRepository<Comment> repository, IRepository<User> u
     }
 
     private static GetCommentDTO MapToGetCommentDTO(Comment comment, User user) =>
-        new(comment.Id, comment.Content, comment.CreatedAt, user.UserName!);
+        new(comment.Id, comment.Content, comment.CreatedAt, user.FullName!);
 }
