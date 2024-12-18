@@ -49,7 +49,7 @@ public class PostService(IRepository<Post> repository, IRepository<User> userRep
         var duplicatedPosts = await _repository.GetAsync(p => p.UserId == dto.UserId && p.Title == dto.Title && p.Title == dto.Content);
         if (duplicatedPosts.Count > 0) throw new ArgumentException("Post was already created");
 
-        var post = new Post(dto.Title, dto.Content, dto.UserId);
+        var post = new Post(dto.Title, dto.Content, dto.BannerUrl, dto.UserId);
         _repository.Add(post);
 
         if (!await _repository.CommitAsync(cancellationToken)) throw new ApplicationException("Was not possible to save the post");
@@ -69,7 +69,7 @@ public class PostService(IRepository<Post> repository, IRepository<User> userRep
         var duplicatedPosts = await _repository.GetAsync(p => p.UserId == dto.UserId && p.Title == dto.Title && p.Content == dto.Content);
         if (duplicatedPosts.Count > 0) throw new ArgumentException("Post was already exists");
 
-        post.Update(dto.Title, dto.Content);
+        post.Update(dto.Title, dto.Content, dto.BannerUrl);
         _repository.Update(post);
 
         if (!await _repository.CommitAsync(cancellationToken)) throw new ApplicationException("Was not possible to save the post");
@@ -106,7 +106,7 @@ public class PostService(IRepository<Post> repository, IRepository<User> userRep
     }
 
     private static GetPostDTO MapToGetPostDTO(Post post, User user) =>
-        new(post.Id, post.Title, post.Content, user.FullName!, post.CreatedAt);
+        new(post.Id, post.Title, post.Content, post.BannerUrl, user.FullName!, post.CreatedAt);
 
     private static GetCommentDTO MapToGetCommentDTO(Comment comment, User user) =>
         new(comment.Id, comment.Content, comment.CreatedAt, user.UserName!);

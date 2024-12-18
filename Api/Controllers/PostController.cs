@@ -49,7 +49,7 @@ public class PostController(IPostService service, UserManager<User> userManager)
             var userId = await GetUserIdAsync();
             if (userId == null) return Unauthorized();
 
-            var addPostDTO = new AddPostDTO(dto.Title, dto.Content, userId.Value);
+            var addPostDTO = new AddPostDTO(dto.Title, dto.Content, dto.BannerUrl, userId.Value);
             var post = await _service.Add(addPostDTO, cancellationToken);
 
             return Ok(post);
@@ -72,7 +72,7 @@ public class PostController(IPostService service, UserManager<User> userManager)
             var userId = await GetUserIdAsync();
             if (userId == null) return Unauthorized();
 
-            var addPostDTO = new AddPostDTO(dto.Title, dto.Content, userId.Value);
+            var addPostDTO = new AddPostDTO(dto.Title, dto.Content, dto.BannerUrl, userId.Value);
             var post = await _service.Update(id, addPostDTO, cancellationToken);
 
             return Ok(post);

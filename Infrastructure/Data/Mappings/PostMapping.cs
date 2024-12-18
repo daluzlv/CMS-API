@@ -12,6 +12,7 @@ public class PostMapping : IEntityTypeConfiguration<Post>
 
         builder.Property(p => p.Title).IsRequired().HasMaxLength(50);
         builder.Property(p => p.Content).IsRequired();
+        builder.Property(p => p.BannerUrl).IsRequired(false);
         builder.Property(p => p.UserId).IsRequired();
         builder.Property(p => p.CreatedAt).IsRequired();
         builder.HasMany(p => p.Comments).WithOne();
