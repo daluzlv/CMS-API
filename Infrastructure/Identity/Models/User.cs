@@ -4,7 +4,7 @@ namespace Infrastructure.Identity.Models;
 
 public class User : IdentityUser
 {
-    public string FullName { get; private set; }
+    public string? FullName { get; private set; }
 
     public User() { }
 
