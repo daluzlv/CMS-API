@@ -119,5 +119,5 @@ public class PostService(IRepository<Post> repository, IRepository<User> userRep
         new(post.Id, post.Title, post.Content, post.BannerUrl, user.FullName!, post.CreatedAt, post.UserId);
 
     private static GetCommentDTO MapToGetCommentDTO(Comment comment, User user) =>
-        new(comment.Id, comment.Content, comment.CreatedAt, user.FullName!);
+        new(comment.Id, comment.Content, comment.CreatedAt, user.FullName!, Guid.Parse(user.Id));
 }

@@ -4,12 +4,13 @@ using Infrastructure.Validator;
 
 namespace Application.DTOs;
 
-public class GetCommentDTO(Guid id, string content, DateTime createdAt, string fullName)
+public class GetCommentDTO(Guid id, string content, DateTime createdAt, string fullName, Guid? userId = null)
 {
     public Guid Id { get; set; } = id;
     public string Content { get; set; } = content;
     public DateTime CreatedAt { get; set; } = createdAt;
     public string FullName { get; set; } = fullName;
+    public Guid? UserId { get; set; } = userId;
 }
 
 public class ApiAddCommentDTO(string content)
