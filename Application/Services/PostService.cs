@@ -13,7 +13,7 @@ public class PostService(IRepository<Post> repository, IRepository<User> userRep
     private readonly IRepository<Post> _repository = repository;
     private readonly IRepository<User> _userRepository = userRepository;
 
-    public async Task<List<GetPostDTO>> GetAsync(string? search)
+    public async Task<List<GetPostByIdDTO>> GetAsync(string? search)
     {
         Expression<Func<Post, bool>> expression = p => true;
         if (!string.IsNullOrWhiteSpace(search))
@@ -22,23 +22,23 @@ public class PostService(IRepository<Post> repository, IRepository<User> userRep
             expression = p => p.Title.ToLower().Contains(search) || p.Content.ToLower().Contains(search);
         }
 
-        var posts = await _repository.GetAsync(expression).ToListAsync();
+        var posts = await _repository.GetAsync(expression).OrderByDescending(p => p.CreatedAt).ToListAsync();
 
         var uniqueUserId = posts.Select(p => p.UserId.ToString()).Distinct().ToList();
         var users = await _userRepository.GetAsync(u => uniqueUserId.Contains(u.Id)).ToListAsync();
 
-        var dto = posts.Select(p => MapToGetPostDTO(p, users.First(u => u.Id == p.UserId.ToString())));
+        var dto = posts.Select(p => MapToGetPostByIdDTO(p, users.First(u => u.Id == p.UserId.ToString())));
         return dto.ToList();
     }
 
-    public async Task<GetPostDTO> GetByIdAsync(Guid id)
+    public async Task<GetPostByIdDTO> GetByIdAsync(Guid id)
     {
         var post = await _repository.GetAsync(p => p.Id == id).Include(p => p.Comments).FirstOrDefaultAsync();
         if (post == null) return null;
 
         var user = await _userRepository.GetByIdAsync(post.UserId.ToString());
 
-        var dto = MapToGetPostDTO(post, user!);
+        var dto = MapToGetPostByIdDTO(post, user!);
 
         var uniqueUserId = post.Comments.Select(p => p.UserId.ToString()).Distinct().ToList();
         var users = await _userRepository.GetAsync(u => uniqueUserId.Contains(u.Id)).ToListAsync();
@@ -114,6 +114,9 @@ public class PostService(IRepository<Post> repository, IRepository<User> userRep
 
     private static GetPostDTO MapToGetPostDTO(Post post, User user) =>
         new(post.Id, post.Title, post.Content, post.BannerUrl, user.FullName!, post.CreatedAt);
+
+    private static GetPostByIdDTO MapToGetPostByIdDTO(Post post, User user) =>
+        new(post.Id, post.Title, post.Content, post.BannerUrl, user.FullName!, post.CreatedAt, post.UserId);
 
     private static GetCommentDTO MapToGetCommentDTO(Comment comment, User user) =>
         new(comment.Id, comment.Content, comment.CreatedAt, user.FullName!);

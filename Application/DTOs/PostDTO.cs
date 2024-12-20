@@ -22,6 +22,18 @@ public class GetPostDTO(Guid id, string title, string content, string bannerUrl,
     public List<GetCommentDTO> Comments { get; set; } = comments ?? [];
 }
 
+public class GetPostByIdDTO(Guid id, string title, string content, string bannerUrl, string fullName, DateTime createdAt, Guid userId, List<GetCommentDTO>? comments = null)
+{
+    public Guid Id { get; set; } = id;
+    public string Title { get; set; } = title;
+    public string Content { get; set; } = content;
+    public string BannerUrl { get; set; } = bannerUrl;
+    public string FullName { get; set; } = fullName;
+    public Guid UserId { get; set; } = userId;
+    public DateTime CreatedAt { get; set; } = createdAt;
+    public List<GetCommentDTO> Comments { get; set; } = comments ?? [];
+}
+
 public class AddPostDTO(string title, string content, string bannerUrl, Guid userId)
 {
     public string Title { get; set; } = title;

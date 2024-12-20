@@ -14,7 +14,7 @@ public class PostController(IPostService service, UserManager<User> userManager)
     private readonly IPostService _service = service;
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<GetPostDTO>>> Get(string? search)
+    public async Task<ActionResult<IEnumerable<GetPostByIdDTO>>> Get(string? search)
     {
         try
         {
@@ -28,7 +28,7 @@ public class PostController(IPostService service, UserManager<User> userManager)
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<GetPostDTO>> GetById(Guid id)
+    public async Task<ActionResult<GetPostByIdDTO>> GetById(Guid id)
     {
         try
         {
