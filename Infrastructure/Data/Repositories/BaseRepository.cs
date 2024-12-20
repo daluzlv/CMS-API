@@ -1,6 +1,5 @@
-﻿using Domain.Interfaces.Repositories.Base;
-using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
+using Domain.Interfaces.Repositories.Base;
 
 namespace Infrastructure.Data.Repositories;
 
@@ -8,13 +7,13 @@ public class BaseRepository<T>(AppDbContext dbContext) : IRepository<T> where T 
 {
     private readonly AppDbContext _dbContext = dbContext;
 
-    public async Task<List<T>> GetAsync(Expression<Func<T, bool>>? expression)
+    public IQueryable<T> GetAsync(Expression<Func<T, bool>>? expression)
     {
         var query = _dbContext.Set<T>().AsQueryable();
         if (expression == null)
-            return await query.ToListAsync();
+            return query;
 
-        return await query.Where(expression).ToListAsync();
+        return query.Where(expression);
     }
 
     public async Task<T?> GetByIdAsync(Guid id) => await _dbContext.Set<T>().FindAsync(id);

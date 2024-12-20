@@ -11,7 +11,7 @@ public class ApiAddPostDTO(string title, string content, string bannerUrl)
     public string BannerUrl { get; set; } = bannerUrl;
 }
 
-public class GetPostDTO(Guid id, string title, string content, string bannerUrl, string fullName, DateTime createdAt)
+public class GetPostDTO(Guid id, string title, string content, string bannerUrl, string fullName, DateTime createdAt, List<GetCommentDTO>? comments = null)
 {
     public Guid Id { get; set; } = id;
     public string Title { get; set; } = title;
@@ -19,6 +19,7 @@ public class GetPostDTO(Guid id, string title, string content, string bannerUrl,
     public string BannerUrl { get; set; } = bannerUrl;
     public string FullName { get; set; } = fullName;
     public DateTime CreatedAt { get; set; } = createdAt;
+    public List<GetCommentDTO> Comments { get; set; } = comments ?? [];
 }
 
 public class AddPostDTO(string title, string content, string bannerUrl, Guid userId)

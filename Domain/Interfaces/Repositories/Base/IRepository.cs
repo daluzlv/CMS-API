@@ -4,7 +4,7 @@ namespace Domain.Interfaces.Repositories.Base;
 
 public interface IRepository<T> where T : class
 {
-    Task<List<T>> GetAsync(Expression<Func<T, bool>>? expression);
+    IQueryable<T> GetAsync(Expression<Func<T, bool>>? expression);
     Task<T?> GetByIdAsync(Guid id);
     Task<T?> GetByIdAsync(string id);
     void Add(T entity);

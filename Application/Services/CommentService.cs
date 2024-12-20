@@ -1,4 +1,6 @@
-﻿using Application.DTOs;
+﻿using Microsoft.EntityFrameworkCore;
+
+using Application.DTOs;
 using Application.Interfaces;
 using Domain.Interfaces.Repositories.Base;
 using Domain.Models;
@@ -39,7 +41,7 @@ public class CommentService(IRepository<Comment> repository, IRepository<User> u
         var comment = await _repository.GetByIdAsync(id) ?? throw new ArgumentException("Comment not found");
         if (comment!.UserId != dto.UserId) throw new UnauthorizedAccessException();
 
-        var duplicatedPosts = await _repository.GetAsync(p => p.UserId == dto.UserId && p.Content == dto.Content);
+        var duplicatedPosts = await _repository.GetAsync(p => p.UserId == dto.UserId && p.Content == dto.Content).ToListAsync(cancellationToken: cancellationToken);
         if (duplicatedPosts.Count > 0) throw new ArgumentException("Comment was already exists");
 
         comment.Update(dto.Content);
