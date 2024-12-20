@@ -29,7 +29,7 @@ public class AuthenticationController(UserManager<User> userManager, ITokenServi
     public async Task<IActionResult> Authenticate(LoginDTO login)
     {
         var user = await _userManager.FindByEmailAsync(login.Email);
-        if (user == null || !await _userManager.CheckPasswordAsync(user, login.Password))
+        if (user == null || !user.EmailConfirmed || !await _userManager.CheckPasswordAsync(user, login.Password))
             return Unauthorized();
 
         var accessToken = _tokenService.Token(user);

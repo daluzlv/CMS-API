@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using SendGrid.Extensions.DependencyInjection;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -10,6 +11,8 @@ public static class ServicesConfiguration
     public static IServiceCollection AddServicesConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDatabaseConfiguration(configuration);
+
+        services.AddSendGrid(options => options.ApiKey = configuration["SendGrid:SendGridKey"]!);
 
         services.AddCors(options =>
         {

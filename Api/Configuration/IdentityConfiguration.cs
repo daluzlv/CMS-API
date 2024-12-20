@@ -6,12 +6,14 @@ namespace Api.Configuration;
 
 public static class IdentityConfiguration
 {
-    public static readonly string[] UnmappedIdentityEndpoints = ["/api/auth/login", "/api/auth/refresh", "/api/auth/confirmEmail", "/api/auth/resendConfirmationEmail", "/api/auth/forgotPassword", "/api/auth/resetPassword", "/api/auth/manage/2fa"];
+    public static readonly string[] UnmappedIdentityEndpoints = ["/api/auth/login", "/api/auth/refresh", "/api/auth/resendConfirmationEmail", "/api/auth/forgotPassword", "/api/auth/resetPassword", "/api/auth/manage/2fa"];
 
     public static IServiceCollection AddIdentityConfiguration(this IServiceCollection services)
     {
-        services.AddIdentityApiEndpoints<User>()
-            .AddEntityFrameworkStores<AppDbContext>();
+        services.AddIdentityApiEndpoints<User>(options =>
+        {
+            options.SignIn.RequireConfirmedEmail = true;
+        }).AddEntityFrameworkStores<AppDbContext>();
 
         services.Configure<IdentityOptions>(options =>
         {
