@@ -9,6 +9,15 @@ public class UserService(IRepository<User> repository) : IUserService
 {
     private readonly IRepository<User> _repository = repository;
 
+    public async Task<UserDTO> GetByIdAsync(Guid id)
+    {
+        var user = await _repository.GetByIdAsync(id.ToString());
+        if (user == null) return null;
+
+        var dto = MapToUserDTO(user);
+        return dto;
+    }
+
     public async Task<UserDTO> Update(UpdateUserDTO dto, Guid userId, CancellationToken cancellationToken)
     {
         var validator = dto.Validate();
@@ -26,4 +35,7 @@ public class UserService(IRepository<User> repository) : IUserService
 
         return new UserDTO(Guid.Parse(user.Id), user.FullName, user.Email!);
     }
+
+    private UserDTO MapToUserDTO(User user) =>
+        new(Guid.Parse(user.Id), user.FullName!, user.Email!);
 }

@@ -8,12 +8,26 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
-[Route("user"), Authorize]
+[Route("user")]
 public class UserController(IUserService service, UserManager<User> userManager) : BaseController(userManager)
 {
     private readonly IUserService _service = service;
 
-    [HttpPut("{id}")]
+    [HttpGet("{id}")]
+    public async Task<ActionResult<UserDTO>> Get(Guid id)
+    {
+        try
+        {
+            var user = await _service.GetByIdAsync(id);
+            return Ok(user);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
+    [HttpPut("{id}"), Authorize]
     public async Task<ActionResult<UserDTO>> Put(Guid id, [FromBody] ApiUpdateUserDTO dto, CancellationToken cancellationToken)
     {
         try
@@ -24,7 +38,7 @@ public class UserController(IUserService service, UserManager<User> userManager)
             var updateDTO = new UpdateUserDTO(id, dto.Fullname);
 
 
-           var user = await _service.Update(updateDTO, userId.Value, cancellationToken);
+            var user = await _service.Update(updateDTO, userId.Value, cancellationToken);
 
             return Ok(user);
         }
