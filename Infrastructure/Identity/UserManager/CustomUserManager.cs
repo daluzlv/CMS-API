@@ -50,7 +50,7 @@ public class CustomUserManager : UserManager<User>
 
     private async Task SendConfimationEmail(User user, string token)
     {
-        var url = @"http://localhost:4200/confirm-email?";
+        var url = @"https://cms-ui-hazel.vercel.app/confirm-email?";
         var codedToken = Uri.EscapeDataString(token);
         url += $"userId={user.Id}&token={codedToken}";
 
