@@ -11,6 +11,40 @@ public class UserDTO(Guid id, string fullName, string email)
     public string Email { get; private set; } = email;
 }
 
+public class ApiCreateUserDTO(string fullname, string email, string password)
+{
+    public string Fullname { get; set; } = fullname;
+    public string Email { get; set; } = email;
+    public string Password { get; set; } = password;
+
+    public ValidationResult Validate()
+    {
+        var validator = new Validator<ApiCreateUserDTO>();
+
+        validator.RuleFor(u => u.Fullname)
+            .NotEmpty()
+            .WithMessage("Full name cannot be empty")
+            .NotNull()
+            .WithMessage("Full name cannot be empty")
+            .MinimumLength(3)
+            .WithMessage("Name is invalid");
+
+        validator.RuleFor(u => u.Email)
+            .EmailAddress()
+            .WithMessage("E-mail is invalid");
+
+        validator.RuleFor(u => u.Password)
+            .NotEmpty()
+            .WithMessage("Password cannot be empty")
+            .NotNull()
+            .WithMessage("Password cannot be empty")
+            .MinimumLength(8)
+            .WithMessage("Password must have at least 8 characters");
+
+        return validator.Validate(this);
+    }
+}
+
 public class ApiUpdateUserDTO(string fullName)
 {
     public string Fullname { get; private set; } = fullName;

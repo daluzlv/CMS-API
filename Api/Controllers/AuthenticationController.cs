@@ -1,4 +1,5 @@
-﻿using Application.DTOs.Auth;
+﻿using Application.DTOs;
+using Application.DTOs.Auth;
 using Infrastructure.Identity.Models;
 using Infrastructure.Interfaces.Services.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -34,5 +35,49 @@ public class AuthenticationController(UserManager<User> userManager, ITokenServi
 
         var accessToken = _tokenService.Token(user);
         return Ok(new { accessToken });
+    }
+
+    [HttpPost("register")]
+    public async Task<IActionResult> Register(ApiCreateUserDTO dto)
+    {
+        var validator = dto.Validate();
+        if (!validator.IsValid)
+        {
+            return BadRequest(validator.Errors.ToList());
+        }
+
+        var user = new User(dto.Email, dto.Fullname);
+        var result = await _userManager.CreateAsync(user, dto.Password);
+
+        if (!result.Succeeded)
+        {
+            return BadRequest(result.Errors);
+        }
+
+        return Ok(new { message = "Usuário criado com sucesso!" });
+    }
+
+    [HttpGet("confirm-email")]
+    public async Task<IActionResult> ConfirmEmail(string userId, string token)
+    {
+        if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
+        {
+            return BadRequest(new { message = "Parâmetros inválidos." });
+        }
+
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            return NotFound(new { message = "Usuário não encontrado." });
+        }
+
+        var decodedToken = Uri.UnescapeDataString(token);
+        var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
+        if (result.Succeeded)
+        {
+            return Ok(new { message = "Email confirmado com sucesso!" });
+        }
+
+        return BadRequest(new { message = "Erro ao confirmar email." });
     }
 }

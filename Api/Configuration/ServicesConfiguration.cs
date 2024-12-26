@@ -16,12 +16,12 @@ public static class ServicesConfiguration
 
         services.AddCors(options =>
         {
-            options.AddPolicy("AllowLocalAngularApp",
+            options.AddPolicy("AllowAll",
                 policy =>
                 {
-                    policy.WithOrigins("http://localhost:4200")
-                          .AllowAnyHeader()
-                          .AllowAnyMethod();
+                    policy.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
                 });
         });
 

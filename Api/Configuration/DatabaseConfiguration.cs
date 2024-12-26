@@ -16,7 +16,8 @@ public static class DatabaseConfiguration
 
     public static WebApplication UseSecurity(this WebApplication app)
     {
-        app.UseCors("AllowLocalAngularApp");
+        app.UseCors("AllowAll");
+
 
         app.UseHttpsRedirection();
         app.UseAuthentication();

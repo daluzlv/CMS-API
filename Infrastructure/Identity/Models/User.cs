@@ -10,5 +10,11 @@ public class User : IdentityUser
 
     public User(string fullName) => FullName = fullName;
 
+    public User(string email, string fullName)
+    {
+        Email = email;
+        FullName = fullName;
+    }
+
     public void UpdateFullName(string fullName) => FullName = fullName;
 }

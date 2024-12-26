@@ -12,6 +12,8 @@ bin/
 obj/
 out/
 
+Api/publish/
+
 # Arquivos de dependência
 project.lock.json
 project.fragment.lock.json
